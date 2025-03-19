@@ -30,6 +30,7 @@ __repo__ = "https://github.com/dcooperdalrymple/CircuitPython_SynthKeyboard.git"
 import asyncio
 import random
 import time
+
 from micropython import const
 
 try:

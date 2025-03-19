@@ -23,25 +23,36 @@ audio = audiopwmio.PWMAudioOut(board.A0)
 synth = synthio.Synthesizer()
 audio.play(synth)
 
-notes = tuple([
-    synthio.Note(
-        frequency=440.0,
-        bend=synthio.Math(synthio.MathOperation.SUM, synthio.LFO(rate=8.0, scale=0.0), 0.0, 0.0)
-    ) for i in range(4)
-])
+notes = tuple(
+    [
+        synthio.Note(
+            frequency=440.0,
+            bend=synthio.Math(
+                synthio.MathOperation.SUM, synthio.LFO(rate=8.0, scale=0.0), 0.0, 0.0
+            ),
+        )
+        for i in range(4)
+    ]
+)
 
 keyboard = Keyboard(max_voices=len(notes))
+
 
 def press(voice):
     notes[voice.index].frequency = synthio.midi_to_hz(voice.note.notenum)
     synth.press(notes[voice.index])
     led.value = True
+
+
 keyboard.on_voice_press = press
+
 
 def release(voice):
     synth.release(notes[voice.index])
     if not synth.pressed:
         led.value = False
+
+
 keyboard.on_voice_release = release
 
 midi = adafruit_midi.MIDI(
@@ -55,10 +66,10 @@ while True:
     elif isinstance(msg, NoteOff) or (isinstance(msg, NoteOn) and msg.velocity == 0):
         keyboard.remove(msg.note)
     elif isinstance(msg, ControlChange):
-        if msg.control == 1: # Mod Wheel
+        if msg.control == 1:  # Mod Wheel
             for note in notes:
                 note.bend.a.scale = msg.value / 127 / 12.0
-        elif msg.control == 64: # Sustain Pedal
+        elif msg.control == 64:  # Sustain Pedal
             keyboard.sustain = msg.value >= 64
     elif isinstance(msg, PitchBend):
         for note in notes:
