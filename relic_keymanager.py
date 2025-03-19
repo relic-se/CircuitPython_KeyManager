@@ -25,7 +25,7 @@ Implementation Notes
 # imports
 
 __version__ = "0.0.0+auto.0"
-__repo__ = "https://github.com/relic-se/CircuitPython_SynthKeyboard.git"
+__repo__ = "https://github.com/relic-se/CircuitPython_KeyManager.git"
 
 import asyncio
 import random

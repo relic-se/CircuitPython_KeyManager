@@ -47,7 +47,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "CircuitPython SynthKeyboard Library"
+project = "CircuitPython KeyManager Library"
 creation_year = "2024"
 current_year = str(datetime.datetime.now().year)
 year_duration = (
@@ -145,8 +145,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "CircuitPython_SynthKeyboard_Library.tex",
-        "CircuitPython SynthKeyboard Library Documentation",
+        "CircuitPython_KeyManager_Library.tex",
+        "CircuitPython KeyManager Library Documentation",
         author,
         "manual",
     ),
@@ -159,8 +159,8 @@ latex_documents = [
 man_pages = [
     (
         master_doc,
-        "CircuitPython_SynthKeyboard_Library",
-        "CircuitPython SynthKeyboard Library Documentation",
+        "CircuitPython_KeyManager_Library",
+        "CircuitPython KeyManager Library Documentation",
         [author],
         1,
     ),
@@ -174,10 +174,10 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "CircuitPython_SynthKeyboard_Library",
-        "CircuitPython SynthKeyboard Library Documentation",
+        "CircuitPython_KeyManager_Library",
+        "CircuitPython KeyManager Library Documentation",
         author,
-        "CircuitPython_SynthKeyboard_Library",
+        "CircuitPython_KeyManager_Library",
         "One line description of project.",
         "Miscellaneous",
     ),
