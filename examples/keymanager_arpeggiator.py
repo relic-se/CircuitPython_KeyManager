@@ -5,7 +5,7 @@
 
 import asyncio
 
-from synthkeyboard import Arpeggiator, ArpeggiatorMode, Keyboard, TimerStep
+from relic_keymanager import Arpeggiator, ArpeggiatorMode, Keyboard, TimerStep
 
 keyboard = Keyboard()
 

@@ -2,8 +2,8 @@ Introduction
 ============
 
 
-.. image:: https://readthedocs.org/projects/circuitpython-synthkeyboard/badge/?version=latest
-    :target: https://circuitpython-synthkeyboard.readthedocs.io/
+.. image:: https://readthedocs.org/projects/circuitpython-keymanager/badge/?version=latest
+    :target: https://circuitpython-keymanager.readthedocs.io/
     :alt: Documentation Status
 
 
@@ -43,18 +43,18 @@ Installing from PyPI
    as a standard element. Stay tuned for PyPI availability!
 
 On supported GNU/Linux systems like the Raspberry Pi, you can install the driver locally `from
-PyPI <https://pypi.org/project/circuitpython-synthkeyboard/>`_.
+PyPI <https://pypi.org/project/circuitpython-keymanager/>`_.
 To install for current user:
 
 .. code-block:: shell
 
-    pip3 install circuitpython-synthkeyboard
+    pip3 install circuitpython-keymanager
 
 To install system-wide (this may be required in some cases):
 
 .. code-block:: shell
 
-    sudo pip3 install circuitpython-synthkeyboard
+    sudo pip3 install circuitpython-keymanager
 
 To install in a virtual environment in your current project:
 
@@ -63,7 +63,7 @@ To install in a virtual environment in your current project:
     mkdir project-name && cd project-name
     python3 -m venv .venv
     source .env/bin/activate
-    pip3 install circuitpython-synthkeyboard
+    pip3 install circuitpython-keymanager
 
 Installing to a Connected CircuitPython Device with Circup
 ==========================================================
@@ -80,7 +80,7 @@ following command to install:
 
 .. code-block:: shell
 
-    circup install synthkeyboard
+    circup install relic_keymanager
 
 Or the following command to update an existing version:
 
@@ -93,7 +93,7 @@ Usage Example
 
 .. code-block:: python
 
-    from synthkeyboard import Keyboard
+    from relic_keymanager import Keyboard
 
     keyboard = Keyboard()
 
@@ -107,7 +107,7 @@ Usage Example
 
 Documentation
 =============
-API documentation for this library can be found on `Read the Docs <https://circuitpython-synthkeyboard.readthedocs.io/>`_.
+API documentation for this library can be found on `Read the Docs <https://circuitpython-keymanager.readthedocs.io/>`_.
 
 For information on building library documentation, please check out
 `this guide <https://learn.adafruit.com/creating-and-sharing-a-circuitpython-library/sharing-our-docs-on-readthedocs#sphinx-5-1>`_.

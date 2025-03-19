@@ -3,22 +3,14 @@
 #
 # SPDX-License-Identifier: Unlicense
 
-import asyncio
+from relic_keymanager import Keyboard
 
-import board
-from digitalio import DigitalInOut
-
-from synthkeyboard import DebouncerKey, Keyboard
-
-keyboard = Keyboard(
-    keys=(
-        DebouncerKey(
-            DigitalInOut(board.USER_SW), inverted=True
-        ),  # Pimoroni Pico Plus 2 BOOTSEL button
-    )
-)
+keyboard = Keyboard()
 
 keyboard.on_voice_press = lambda voice: print(f"Pressed: {voice.note.notenum:d}")
 keyboard.on_voice_release = lambda voice: print(f"Released: {voice.note.notenum:d}")
 
-asyncio.run(keyboard.update())
+for i in range(1, 4):
+    keyboard.append(i)
+for i in range(3, 0, -1):
+    keyboard.remove(i)

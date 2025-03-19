@@ -14,7 +14,7 @@ from adafruit_midi.note_off import NoteOff
 from adafruit_midi.note_on import NoteOn
 from adafruit_midi.pitch_bend import PitchBend
 
-import synthkeyboard
+from relic_keymanager import Keyboard
 
 led = digitalio.DigitalInOut(board.LED)
 led.direction = digitalio.Direction.OUTPUT
@@ -30,7 +30,7 @@ notes = tuple([
     ) for i in range(4)
 ])
 
-keyboard = synthkeyboard.Keyboard(max_voices=len(notes))
+keyboard = Keyboard(max_voices=len(notes))
 
 def press(voice):
     notes[voice.index].frequency = synthio.midi_to_hz(voice.note.notenum)

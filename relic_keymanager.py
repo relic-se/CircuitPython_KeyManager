@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: MIT
 """
-`synthkeyboard`
+`relic_keymanager`
 ================================================================================
 
 Tools to manage notes in musical applications. Includes note priority, arpeggiation, and sequencing.

@@ -5,7 +5,7 @@
 
 import asyncio
 
-from synthkeyboard import Keyboard, Sequencer
+from relic_keymanager import Keyboard, Sequencer
 
 keyboard = Keyboard()
 

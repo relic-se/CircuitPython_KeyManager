@@ -11,7 +11,7 @@ requires = [
 ]
 
 [project]
-name = "circuitpython-synthkeyboard"
+name = "circuitpython-keymanager"
 description = "Tools to manage notes in musical applications. Includes note priority, arpeggiation, and sequencing."
 version = "0.0.0+auto.0"
 readme = "README.rst"
@@ -24,7 +24,7 @@ keywords = [
     "blinka",
     "circuitpython",
     "micropython",
-    "synthkeyboard",
+    "relic_keymanager",
     "synthesizer",
     "music",
     "keyboard",
@@ -45,7 +45,7 @@ classifiers = [
 dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools]
-py-modules = ["synthkeyboard"]
+py-modules = ["relic_keymanager"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
