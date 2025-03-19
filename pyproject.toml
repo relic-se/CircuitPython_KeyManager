@@ -18,7 +18,7 @@ readme = "README.rst"
 authors = [
     {name = "Cooper Dalrymple", email = "me@dcdalrymple.com"}
 ]
-urls = {Homepage = "https://github.com/dcooperdalrymple/CircuitPython_SynthKeyboard"}
+urls = {Homepage = "https://github.com/relic-se/CircuitPython_SynthKeyboard"}
 keywords = [
     "adafruit",
     "blinka",
