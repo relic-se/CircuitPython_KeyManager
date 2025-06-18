@@ -31,79 +31,13 @@ import asyncio
 import random
 import time
 
+import keypad
 from micropython import const
 
 try:
     from typing import Callable
-
-    from circuitpython_typing.io import ROValueIO
 except ImportError:
     pass
-
-
-class KeyState:
-    """An enum-like class representing states used by :class:`Key` and :class:`Keyboard`."""
-
-    NONE: int = const(0)
-    """Indicates that the key hasn't been activated in any way"""
-
-    PRESS: int = const(1)
-    """Indicates that the key has been pressed"""
-
-    RELEASE: int = const(2)
-    """Indicates that the key has been released"""
-
-
-class Key:
-    """An abstract layer to interface with the :class:`Keyboard` class."""
-
-    def __init__(self):
-        pass
-
-    @property
-    def state(self) -> int:
-        """The current state as a constant value of :class:`KeyState`."""
-        return KeyState.NONE
-
-    @property
-    def velocity(self) -> float:
-        """Get the current velocity (0.0-1.0)."""
-        return 1.0
-
-
-class DebouncerKey(Key):
-    """An abstract layer to debouncer sensor input to use physical key objects with the
-    :class:`Keyboard` class. The Adafruit-CircuitPython-Debouncer module must be installed to use
-    this class, else a ImportError will be thrown upon instantiation.
-
-    :param io_or_predicate: The input pin or arbitrary predicate to debounce
-    :int inverted: Whether or not to invert the state of the input. When invert is `False`, the
-        signal is active-high. When it is `True`, the signal is active-low.
-    """
-
-    def __init__(self, io_or_predicate: ROValueIO | Callable[[], bool], inverted: bool = False):
-        from adafruit_debouncer import Debouncer
-
-        self._debouncer = Debouncer(io_or_predicate)
-        self._inverted = inverted
-
-    inverted: bool = False
-    """Whether or not the state is inverted. When invert is `False`, the signal is active-high. When
-    it is `True`, the signal is active-low.
-    """
-
-    @property
-    def state(self) -> int:
-        """The current state as a constant value of :class:`KeyState`. When accessed, the input pin
-        or arbitraary predicate will be updated with basic debouncing.
-        """
-        self._debouncer.update()
-        if self._debouncer.rose:
-            return KeyState.PRESS if not self._inverted else KeyState.RELEASE
-        elif self._debouncer.fell:
-            return KeyState.RELEASE if not self._inverted else KeyState.PRESS
-        else:
-            return KeyState.NONE
 
 
 class Note:
@@ -766,7 +700,7 @@ class Keyboard:
 
     def __init__(
         self,
-        keys: tuple[Key] = [],
+        keys: keypad = None,
         max_voices: int = 1,
         root: int = 48,
         mode: int = KeyboardMode.HIGH,
@@ -799,11 +733,11 @@ class Keyboard:
     release(keynum, notenum):`.
     """
 
-    _keys: tuple[Key] = None
+    _keys: keypad = None
 
     @property
-    def keys(self) -> tuple[Key]:
-        """The :class:`Key` objects which will be used to update the keyboard state."""
+    def keys(self) -> keypad:
+        """The :class:`keypad.Keys` object which will be used to update the keyboard state."""
         return self._keys
 
     _arpeggiator: Arpeggiator = None
@@ -915,20 +849,19 @@ class Keyboard:
         :param delay: The amount of time to sleep between polling in seconds.
         """
         while self._keys:
-            for i in range(len(self._keys)):
-                state = self._keys[i].state
-                if state == KeyState.NONE:
-                    continue
-                notenum = self.root + i
-                if state == KeyState.PRESS:
-                    velocity = self._keys[i].velocity
-                    self.append(notenum, velocity, i)
+            while True:
+                event = self._keys.events.get()
+                if not event:
+                    break
+                notenum = self.root + event.key_number
+                if event.pressed:
+                    self.append(notenum, keynum=event.key_number)
                     if callable(self.on_key_press):
-                        self.on_key_press(i, notenum, velocity)
-                else:  # KeyState.RELEASE
+                        self.on_key_press(event.key_number, notenum, 1.0)
+                elif event.released:
                     self.remove(notenum)
                     if callable(self.on_key_release):
-                        self.on_key_release(i, notenum)
+                        self.on_key_release(event.key_number, notenum)
             await asyncio.sleep(delay)
 
     def _update(self) -> None:

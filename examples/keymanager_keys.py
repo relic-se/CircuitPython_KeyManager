@@ -6,16 +6,12 @@
 import asyncio
 
 import board
-from digitalio import DigitalInOut
+from keypad import Keys
 
-from relic_keymanager import DebouncerKey, Keyboard
+from relic_keymanager import Keyboard
 
 keyboard = Keyboard(
-    keys=(
-        DebouncerKey(
-            DigitalInOut(board.USER_SW), inverted=True
-        ),  # Pimoroni Pico Plus 2 BOOTSEL button
-    )
+    keys=Keys((board.USER_SW,), value_when_pressed=False, pull=False),
 )
 
 keyboard.on_voice_press = lambda voice: print(f"Pressed: {voice.note.notenum:d}")
