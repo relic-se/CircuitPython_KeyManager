@@ -28,10 +28,10 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/relic-se/CircuitPython_KeyManager.git"
 
 import asyncio
-import keypad
 import random
 import time
 
+import keypad
 from micropython import const
 
 try:
