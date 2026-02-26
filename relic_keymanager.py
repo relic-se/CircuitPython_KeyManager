@@ -621,6 +621,12 @@ class Sequencer(Timer):
         """The current position of the sequencer within the track length (0-based)."""
         return self._pos
 
+    @position.setter
+    def position(self, value: int) -> None:
+        self._pos = value % self._length
+        if self._last_press:
+            self._do_release()
+
     def set_note(self, position: int, notenum: int, velocity: float = 1.0, track: int = 0) -> None:
         """Set the note value and velocity of a track at a specific step index.
 
