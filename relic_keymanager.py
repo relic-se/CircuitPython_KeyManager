@@ -331,6 +331,22 @@ class Timer:
 
     _last_press: list[int] = []
 
+    def update(self) -> None:
+        """Update the timer object and call any relevant callbacks if a new beat step or the end of
+        the gate of a step is reached. For best performance, call this method frequently! The
+        actual functionality of this method will depend on the child class that utilizes the
+        :class:`Timer` parent class.
+        """
+        if not self._active:
+            return
+        current = time.monotonic()
+        if self._last_press and current - self._now >= self._gate_duration:
+            self._do_release()
+        if current - self._now >= self._step_time:
+            self._update()
+            self._do_step()
+            self._now += self._step_time
+
     async def update_async(self):
         """Update the timer object using asyncio and call any relevant callbacks if a new beat step
         or the end of the gate of a step is reached. The actual functionality of this method will
@@ -352,22 +368,6 @@ class Timer:
     async def _sleep(self, delay: float):
         self._now += delay
         await asyncio.sleep(self._now - time.monotonic())
-
-    def update(self) -> None:
-        """Update the timer object and call any relevant callbacks if a new beat step or the end of
-        the gate of a step is reached. For best performance, call this method frequently! The
-        actual functionality of this method will depend on the child class that utilizes the
-        :class:`Timer` parent class.
-        """
-        if not self._active:
-            return
-        current = time.monotonic()
-        if self._last_press and current - self._now >= self._gate_duration:
-            self._do_release()
-        if current - self._now >= self._step_time:
-            self._update()
-            self._do_step()
-            self._now += self._step_time
 
     def _update(self):
         pass
@@ -859,8 +859,25 @@ class Keyboard:
             self._sustained = [note for note in self._sustained if note != notenum]
         self._update()
 
-    async def update(self, delay: float = 0.01) -> None:
-        """Update :attr:`keys` objects if they were provided during initialization.
+    def update(self) -> None:
+        """Update :attr:`keys` objects if they were provided during initialization. For best
+        performance, call frequently!
+
+        :param delay: The amount of time to sleep between polling in seconds.
+        """
+        if event := self._keys.events.get():
+            notenum = self.root + event.key_number
+            if event.pressed:
+                self.append(notenum, keynum=event.key_number)
+                if callable(self.on_key_press):
+                    self.on_key_press(event.key_number, notenum, 1.0)
+            elif event.released:
+                self.remove(notenum)
+                if callable(self.on_key_release):
+                    self.on_key_release(event.key_number, notenum)
+
+    async def update_async(self, delay: float = 0.01) -> None:
+        """Update :attr:`keys` objects if they were provided during initialization using asyncio.
 
         :param delay: The amount of time to sleep between polling in seconds.
         """
