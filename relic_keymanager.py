@@ -331,10 +331,10 @@ class Timer:
 
     _last_press: list[int] = []
 
-    async def update(self):
-        """Update the timer object and call any relevant callbacks if a new beat step or the end of
-        the gate of a step is reached. The actual functionality of this method will depend on the
-        child class that utilizes the :class:`Timer` parent class.
+    async def update_async(self):
+        """Update the timer object using asyncio and call any relevant callbacks if a new beat step
+        or the end of the gate of a step is reached. The actual functionality of this method will
+        depend on the child class that utilizes the :class:`Timer` parent class.
         """
         while True:
             if not self._active:
