@@ -353,6 +353,22 @@ class Timer:
         self._now += delay
         await asyncio.sleep(self._now - time.monotonic())
 
+    def update(self) -> None:
+        """Update the timer object and call any relevant callbacks if a new beat step or the end of
+        the gate of a step is reached. For best performance, call this method frequently! The
+        actual functionality of this method will depend on the child class that utilizes the
+        :class:`Timer` parent class.
+        """
+        if not self._active:
+            return
+        current = time.monotonic()
+        if self._last_press and current - self._now >= self._gate_duration:
+            self._do_release()
+        if current - self._now >= self._step_time:
+            self._update()
+            self._do_step()
+            self._now += self._step_time
+
     def _update(self):
         pass
 
