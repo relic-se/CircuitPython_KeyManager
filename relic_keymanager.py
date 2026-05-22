@@ -577,11 +577,6 @@ class Sequencer(Timer):
         self.tracks = tracks
         self._data = [[None for j in range(self._length)] for i in range(self._tracks)]
 
-        self._loop_start = 0
-        self._loop_end = None
-        self._loop_type = LoopType.LOOP
-        self._pos = 0
-
     def _get_end(self) -> int:
         return min(self._loop_end, self._length) if self._loop_end is not None else self._length
 
