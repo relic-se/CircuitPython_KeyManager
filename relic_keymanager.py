@@ -645,15 +645,15 @@ class Sequencer(Timer):
         - 1.
         """
         return self._loop_start
-    
+
     @loop_start.setter
     def loop_start(self, value: int) -> int:
         self._loop_start = min(max(value, 0), self._get_end() - 1)
 
-    _loop_end: int|None = None
+    _loop_end: int | None = None
 
     @property
-    def loop_end(self) -> int|None:
+    def loop_end(self) -> int | None:
         """The index of the sequence of which to loop back from when :attr:`position` reaches it.
         Should be a value between :attr:`loop_start` + 1 and :attr:`length`. If set as `None`, this
         value will be ignored and :attr:`length` will be used instead.
@@ -661,8 +661,10 @@ class Sequencer(Timer):
         return self._loop_end
 
     @loop_end.setter
-    def loop_end(self, value: int|None) -> None:
-        self._loop_end = min(max(value, self._loop_start + 1), self._length) if value is not None else value
+    def loop_end(self, value: int | None) -> None:
+        self._loop_end = (
+            min(max(value, self._loop_start + 1), self._length) if value is not None else value
+        )
 
     _loop_type: int = LoopType.LOOP
 
