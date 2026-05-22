@@ -742,6 +742,12 @@ class Sequencer(Timer):
     called. Must have 1 parameter for sequencer position index. Ie: :code:`def step(pos):`.
     """
 
+    on_loop: Callable[[int], None] = None
+    """The callback method that is called when a the sequencer :attr:`position` reaches
+    :attr:`loop_end` and begins back at :attr:`loop_start`. Must have 1 parameter for sequencer
+    position index, typically :attr:`loop_start`. Ie: :code:`def loop(pos):`.
+    """
+
     def _update(self):
         self._pos += 1
         end = self._get_end()
@@ -750,6 +756,7 @@ class Sequencer(Timer):
             if self._loop_type == LoopType.SINGLE:
                 self.active = False
                 return
+            self._do_loop()
         for i in range(self._tracks):
             note = self._data[i][self._pos]
             if note and note[0] > 0 and note[1] > 0:
@@ -758,6 +765,10 @@ class Sequencer(Timer):
     def _do_step(self):
         if callable(self.on_step):
             self.on_step(self._pos)
+
+    def _do_loop(self):
+        if callable(self.on_loop):
+            self.on_loop(self._pos)
 
 
 class KeyboardMode:
