@@ -550,6 +550,16 @@ class Arpeggiator(Timer):
             self._do_press(self._notes[self._pos].notenum, self._notes[self._pos].velocity)
 
 
+class LoopType:
+    """An enum-like class representing sequencer looping methods."""
+
+    LOOP: int = const(0)
+    """When the end of a loop is reached, return back to the start."""
+
+    SINGLE: int = const(1)
+    """When the end of a loop is reached, stop sequence."""
+
+
 class Sequencer(Timer):
     """Sequence notes using the :class:`Timer` class to create a multi-track note sequencer. By
     default, the Sequencer is set up for a single 4/4 measure of 16 notes with one track. Each note
@@ -567,6 +577,14 @@ class Sequencer(Timer):
         self.tracks = tracks
         self._data = [[None for j in range(self._length)] for i in range(self._tracks)]
 
+        self._loop_start = 0
+        self._loop_end = None
+        self._loop_type = LoopType.LOOP
+        self._pos = 0
+
+    def _get_end(self) -> int:
+        return min(self._loop_end, self._length) if self._loop_end is not None else self._length
+
     _data: list = None
 
     _length: int = 16
@@ -574,9 +592,10 @@ class Sequencer(Timer):
     @property
     def length(self) -> int:
         """The number of steps for each track. If the length is shortened, all of the step data
-        beyond the new length will be deleted, and if the sequencer is also currently running, it
-        should loop back around automatically to the start of the track data. The minimum allowed
-        is 1.
+        beyond the new length will be deleted and the :attr:`loop_start` and :attr:`loop_end`
+        properties may be altered. If the sequencer is currently running, it should loop back around
+        automatically to the start of the track data if :attr:`position` is beyond the new value.
+        The minimum length allowed is 1.
         """
         return self._length
 
@@ -591,6 +610,9 @@ class Sequencer(Timer):
                 for i in range(self._tracks):
                     del self._data[i][value:]
         self._length = value
+        if self._loop_end is not None:
+            self._loop_end = min(self._loop_end, self._length)
+        self._loop_start = min(self._loop_start, self._get_end() - 1)
 
     _tracks: int = 1
 
@@ -613,6 +635,45 @@ class Sequencer(Timer):
             elif value < self._tracks:
                 del self._data[value:]
         self._tracks = value
+
+    _loop_start: int = 0
+
+    @property
+    def loop_start(self) -> int:
+        """The index of the sequence of which to begin at when looping back. This occurs when
+        :attr:`position` reaches :attr:`loop_end`. Should be a value between 0 and :attr:`loop_end`
+        - 1.
+        """
+        return self._loop_start
+    
+    @loop_start.setter
+    def loop_start(self, value: int) -> int:
+        self._loop_start = min(max(value, 0), self._get_end() - 1)
+
+    _loop_end: int|None = None
+
+    @property
+    def loop_end(self) -> int|None:
+        """The index of the sequence of which to loop back from when :attr:`position` reaches it.
+        Should be a value between :attr:`loop_start` + 1 and :attr:`length`. If set as `None`, this
+        value will be ignored and :attr:`length` will be used instead.
+        """
+        return self._loop_end
+
+    @loop_end.setter
+    def loop_end(self, value: int|None) -> None:
+        self._loop_end = min(max(value, self._loop_start + 1), self._length) if value is not None else value
+
+    _loop_type: int = LoopType.LOOP
+
+    @property
+    def loop_type(self) -> int:
+        """The method of looping through the sequence. See :class:`LoopType` for options."""
+        return self._mode
+
+    @loop_type.setter
+    def loop_type(self, value: int) -> None:
+        self._loop_type = value % 2
 
     _pos: int = 0
 
@@ -685,7 +746,13 @@ class Sequencer(Timer):
     """
 
     def _update(self):
-        self._pos = (self._pos + 1) % self._length
+        self._pos += 1
+        end = self._get_end()
+        if self._pos >= end:
+            self._pos = min(max(self._loop_start, 0), end - 1)
+            if self._loop_type == LoopType.SINGLE:
+                self.active = False
+                return
         for i in range(self._tracks):
             note = self._data[i][self._pos]
             if note and note[0] > 0 and note[1] > 0:
